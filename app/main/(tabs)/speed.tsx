@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import Svg, { Circle, Text as SvgText } from 'react-native-svg';
@@ -24,6 +24,12 @@ export default function SpeedScreen() {
   
   // Colors
   const tintColor = '#FF4D4D'; // Match the red color from Figma
+
+  // Handlers for updating speed and distance
+  const increaseSpeed = () => setSpeed(Math.min(speed + 5, 100));
+  const decreaseSpeed = () => setSpeed(Math.max(speed - 5, 0));
+  const increaseDistance = () => setDistance(distance + 1);
+  const decreaseDistance = () => setDistance(Math.max(distance - 1, 0));
 
   return (
     <ThemedView style={styles.container}>
@@ -87,6 +93,26 @@ export default function SpeedScreen() {
           <Text style={styles.distanceText}>{distance} 公尺</Text>
         </TouchableOpacity>
       </View>
+      
+      {/* Speed and Distance Controls */}
+      <View style={styles.controlsContainer}>
+        <View style={styles.controlRow}>
+          <TouchableOpacity style={styles.controlButton} onPress={decreaseSpeed}>
+            <Text style={styles.controlButtonText}>Speed -</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.controlButton} onPress={increaseSpeed}>
+            <Text style={styles.controlButtonText}>Speed +</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.controlRow}>
+          <TouchableOpacity style={styles.controlButton} onPress={decreaseDistance}>
+            <Text style={styles.controlButtonText}>Distance -</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.controlButton} onPress={increaseDistance}>
+            <Text style={styles.controlButtonText}>Distance +</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Notification button */}
       <TouchableOpacity style={styles.notificationButton}>
@@ -99,7 +125,7 @@ export default function SpeedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent:'space-between',
+    justifyContent: 'space-between',
     backgroundColor: '#000000',
   },
   banner: {
@@ -159,6 +185,27 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   distanceText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  controlsContainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  controlRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  controlButton: {
+    backgroundColor: '#333',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  controlButtonText: {
     color: 'white',
     fontWeight: 'bold',
   },
