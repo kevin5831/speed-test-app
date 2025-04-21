@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   paragraph: {
-    color: '#FFFFFF',
+    color: '#111111',
     fontSize: 16,
     lineHeight: 24,
     marginVertical: 20,

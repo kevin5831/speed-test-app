@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 
-export default function HomeScreen() {
+export default function AlarmScreen() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView 
