@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import Svg, { Circle, Text as SvgText } from 'react-native-svg';
+import { View, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { RewardIcon } from '@/components/icon/reward';
 import { SpeedIndicators } from '@/components/SpeedIndicators';
+import { Image } from 'react-native';
+import { DistanceButtonSVG } from '@/components/DistanceButtonSVG';
+import { SpeedometerSVG } from '@/components/Speedometer';
 
 export default function SpeedScreen() {
-  const colorScheme = useColorScheme();
   const [speed, setSpeed] = useState(90);
-  const [distance, setDistance] = useState(15);
+  const [distance, setDistance] = useState(16);
   const [speedLimit, setSpeedLimit] = useState(60);
   
   // SVG parameters for the large speedometer
@@ -34,92 +34,29 @@ export default function SpeedScreen() {
       <ThemedView style={styles.container}>
         {/* Banner at the top */}
         <View style={styles.banner}>
-          <View>
-            <Text style={styles.bannerText}>CAR FOR RENT</Text>
-            <Text style={styles.bannerSubtext}>With 5% discount</Text>
-            <Text style={styles.bannerPrice}>$5.99</Text>
-          </View>
-          <View style={styles.carImagePlaceholder} />
+          <Image
+            source={require('@/assets/images/advertise.png')} // Make sure this path is correct
+            style={styles.bannerImage}
+          />
         </View>
-        
         {/* Main content area - contains both components */}
         <View style={styles.contentContainer}>
-          {/* Speed indicators as a separate component above the speedometer */}
-          <SpeedIndicators speedLimit={speedLimit} />
-          
-          {/* Speedometer as a separate component */}
-          <View style={styles.speedometerContainer}>
-            <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-              {/* Background circle - dark gray */}
-              <Circle
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                strokeWidth={strokeWidth}
-                stroke={'rgba(30, 30, 30, 0.6)'}
-                fill="transparent"
-              />
-              
-              {/* Progress circle - red with rounded ends */}
-              <Circle
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                strokeWidth={strokeWidth}
-                stroke={tintColor}
-                fill="transparent"
-                strokeDasharray={`${progress} ${remainingProgress}`}
-                strokeDashoffset={0}
-                strokeLinecap="round"
-                transform={`rotate(-90, ${size / 2}, ${size / 2})`}
-              />
-              
-              {/* Inner border for progress circle */}
-              <Circle
-                cx={size / 2}
-                cy={size / 2}
-                r={innerRadius}
-                strokeWidth={1}
-                stroke={'rgba(80, 80, 80, 0.5)'}
-                fill="transparent"
-              />
-              
-              {/* Red circle around the speed value */}
-              <Circle
-                cx={size / 2}
-                cy={size / 2}
-                r={innerRedRadius}
-                strokeWidth={2}
-                stroke={tintColor}
-                fill="#272323"
-              />
-              
-              {/* Inner black circle for the speed value background */}
-              <Circle
-                cx={size / 2}
-                cy={size / 2}
-                r={innerRedRadius - 2}
-                fill="#272323"
-              />
-            </Svg>
-            
-            {/* Speed value overlay */}
-            <View style={styles.speedValueContainer}>
-              <Text style={styles.speedValueText}>{speed}</Text>
-              <Text style={styles.speedUnitText}>Km/h</Text>
+          <View style={styles.speedContainer}>
+            <SpeedometerSVG speed={120} />
+            <View style={styles.distanceContainer}>
+              <TouchableOpacity style={styles.distanceButton}>
+                <DistanceButtonSVG distance={distance} />
+              </TouchableOpacity>
             </View>
-            
-            {/* Distance button */}
-            <TouchableOpacity style={styles.distanceButton}>
-              <Text style={styles.distanceText}>{distance} 公尺</Text>
-            </TouchableOpacity>
           </View>
+          <SpeedIndicators speedLimit={speedLimit} />
         </View>
-        
         {/* Notification/Reward button */}
-        <TouchableOpacity style={styles.notificationButton}>
-          <RewardIcon focused={false} />
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity style={styles.notificationButton}>
+            <RewardIcon focused={false} />
+          </TouchableOpacity>
+        </View>
       </ThemedView>
     </SafeAreaView>
   );
@@ -140,67 +77,31 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#222222',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
     height: 80,
   },
-  bannerText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 18,
-    textTransform: 'uppercase',
-  },
-  bannerSubtext: {
-    color: 'white',
-    fontSize: 12,
-    opacity: 0.8,
-    marginTop: 2,
-  },
-  bannerPrice: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 5,
-  },
-  carImagePlaceholder: {
-    width: 120,
-    height: 60,
-    backgroundColor: '#333333',
-    borderRadius: 5,
+  bannerImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius:6,
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // previously 'center'
     alignItems: 'center',
     position: 'relative',
+    marginTop:"5%"
   },
-  speedometerContainer: {
+  speedContainer:{
+    marginTop:"28%"
+  },
+  distanceContainer: {
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 280,
-    height: 350,
-  },
-  speedValueContainer: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  speedValueText: {
-    fontSize: 72,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-  },
-  speedUnitText: {
-    fontSize: 14,
-    color: '#999999',
-    marginTop: -5,
   },
   distanceButton: {
     position: 'absolute',
-    bottom: 30,
-    backgroundColor: '#634A50',
+    bottom: 0,
     paddingHorizontal: 25,
     paddingVertical: 10,
     borderRadius: 25,
@@ -209,6 +110,20 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  button: {
+    marginTop: 4,
+    borderRadius: 10,
+    borderWidth:4.5,
+    height: '10%',
+    width: '80%',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+  },
+  ButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   notificationButton: {
     position: 'absolute',
