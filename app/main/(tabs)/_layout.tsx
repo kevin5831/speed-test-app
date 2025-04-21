@@ -9,8 +9,9 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
 import { AlarmIcon } from '@/components/icon/alarm';
+import { EyeIcon } from '@/components/icon/eye';
 import { UserIcon } from '@/components/icon/user';
-
+import { VoiceIcon } from '@/components/icon/voice';
 export default function TabLayout() {
   return (
     <>
@@ -42,9 +43,21 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="eye"
+          options={{
+            tabBarIcon: ({ focused }) => <EyeIcon focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
           name="speed"
           options={{
             tabBarIcon: ({ focused }) => <SpeedIcon focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
+          name="voice"
+          options={{
+            tabBarIcon: ({ focused }) => <VoiceIcon focused={focused} />,
           }}
         />
         <Tabs.Screen

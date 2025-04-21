@@ -17,7 +17,7 @@ interface RewardIconProps {
 export const RewardIcon: React.FC<RewardIconProps> = ({ focused = false }) => {
   return (
     <View style={styles.container}>
-      <Svg width="32" height="32" viewBox="0 0 64 64" fill="none">
+      <Svg width="64" height="64" viewBox="0 0 64 64" fill="none">
         <Defs>
           <LinearGradient id="paint0_linear_1786_10956" x1="0" y1="0.447557" x2="64" y2="63.5524" gradientUnits="userSpaceOnUse">
             <Stop stopColor="#FF4D4D" />
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 30,
-    height: 30,
+    width: 64,
+    height: 64,
   },
 });
