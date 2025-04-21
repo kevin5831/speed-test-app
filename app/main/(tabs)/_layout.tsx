@@ -1,6 +1,6 @@
 import { Stack, Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, View, SafeAreaView } from 'react-native';
+import { Platform} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { HapticTab } from '@/components/HapticTab';
@@ -13,7 +13,7 @@ import { UserIcon } from '@/components/icon/user';
 
 export default function TabLayout() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
+    <>
       <StatusBar style="light" />
       <Tabs
         screenOptions={{
@@ -36,7 +36,7 @@ export default function TabLayout() {
           }),
         }}>
         <Tabs.Screen
-          name="home"
+          name="alarm"
           options={{
             tabBarIcon: ({ focused }) => <AlarmIcon focused={focused} />,
           }}
@@ -54,6 +54,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </SafeAreaView>
+    </>
   );
 }

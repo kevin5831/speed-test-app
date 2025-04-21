@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Svg, { Path, LinearGradient, Stop, Defs, Stroke } from 'react-native-svg';
+import Svg, { Path, LinearGradient, Stop, Defs } from 'react-native-svg';
 
 interface AlarmIconProps {
   focused?: boolean;
