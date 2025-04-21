@@ -8,27 +8,10 @@ import { DistanceButtonSVG } from '@/components/DistanceButtonSVG';
 import { SpeedometerSVG } from '@/components/Speedometer';
 
 export default function SpeedScreen() {
-  const [speed, setSpeed] = useState(90);
+  const [speed, setSpeed] = useState(100);
   const [distance, setDistance] = useState(16);
-  const [speedLimit, setSpeedLimit] = useState(60);
+  const [speedLimit, setSpeedLimit] = useState(70);
   
-  // SVG parameters for the large speedometer
-  const size = 280;
-  const strokeWidth = 25;
-  const radius = (size - strokeWidth) / 2;
-  const innerRadius = radius - strokeWidth/2;
-  // Smaller inner circle to create the red ring around the speed value
-  const innerRedRadius = innerRadius - 10; 
-  const circumference = 2 * Math.PI * radius;
-  
-  // Calculate progress (speed should be between 0-100)
-  const normalizedSpeed = Math.min(100, Math.max(0, speed));
-  const progress = (normalizedSpeed / 100) * circumference;
-  const remainingProgress = circumference - progress;
-  
-  // Colors
-  const tintColor = '#FF4D4D';
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <ThemedView style={styles.container}>
@@ -42,7 +25,7 @@ export default function SpeedScreen() {
         {/* Main content area - contains both components */}
         <View style={styles.contentContainer}>
           <View style={styles.speedContainer}>
-            <SpeedometerSVG speed={120} />
+            <SpeedometerSVG speed={speed} />
             <View style={styles.distanceContainer}>
               <TouchableOpacity style={styles.distanceButton}>
                 <DistanceButtonSVG distance={distance} />
