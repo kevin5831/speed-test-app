@@ -68,8 +68,8 @@
 	</array>
 	<key>UIRequiresFullScreen</key>
 	<false/>
-	<key>NNSupportsLiveActivities</key>
-	<string>YES</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
