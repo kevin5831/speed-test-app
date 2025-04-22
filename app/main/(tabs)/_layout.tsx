@@ -2,7 +2,7 @@ import React, { useState, useEffect  } from 'react';
 import { View, Platform, Alert, TouchableOpacity, StyleSheet, AppState } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Tabs } from 'expo-router';
-import DynamicIslandAPI from '@/modules/DynamicislandAPI';
+import DynamicIslandAPI from '@/modules/DynamicIslandAPI';
 
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
