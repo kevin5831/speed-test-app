@@ -1,8 +1,8 @@
-import { Stack, Tabs } from 'expo-router';
 import React, { useState, useEffect  } from 'react';
 import { View, Platform, Alert, TouchableOpacity, StyleSheet, AppState } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import DynamicIslandAPI from '@/modules/DynamicIslandAPI';
+import { Tabs } from 'expo-router';
+import DynamicIslandAPI from '@/modules/DynamicislandAPI';
 
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
