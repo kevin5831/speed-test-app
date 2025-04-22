@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function EyeScreen() {
@@ -12,6 +12,9 @@ export default function EyeScreen() {
         <View>
           <Text style={styles.text}>Eye Page</Text>
         </View>
+        <Text style={styles.text}>
+          Welcome to the app! This is the alarm/home screen.
+        </Text>
       </ScrollView>
     </ThemedView>
   );

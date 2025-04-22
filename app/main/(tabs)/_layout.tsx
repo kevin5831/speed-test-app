@@ -22,11 +22,9 @@ export default function TabLayout() {
           tabBarInactiveTintColor: '#777777', 
           headerShown: false,
           tabBarButton: HapticTab,
-          tabBarBackground: TabBarBackground,
           tabBarShowLabel: false,
           tabBarStyle: Platform.select({
             ios: {
-              position: 'absolute',
               backgroundColor: '#121212', 
               borderTopWidth: 0, 
             },

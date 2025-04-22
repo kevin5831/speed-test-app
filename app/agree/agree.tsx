@@ -9,12 +9,12 @@ export default function AgreeScreen() {
 
   const handleAccept = () => {
     // Always use the same path format when navigating back to maintain consistency
-    router.replace('/main/(tabs)/home');
+    router.replace('/main/(tabs)/alarm');
   };
 
   const handleDecline = () => {
     // Match the same path format for consistency
-    router.replace('/main/(tabs)/home');
+    router.replace('/main/(tabs)/alarm');
   };
 
   return (

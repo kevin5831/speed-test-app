@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a171f',
-    paddingTop: 25,
   },
   banner: {
     flexDirection: 'row',
