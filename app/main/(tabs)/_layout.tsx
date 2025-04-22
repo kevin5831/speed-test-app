@@ -1,8 +1,9 @@
 import React, { useState, useEffect  } from 'react';
-import { View, Platform, Alert, TouchableOpacity, StyleSheet, AppState } from 'react-native';
+import { View, Platform, Alert, TouchableOpacity, NativeModules, StyleSheet, AppState } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Tabs } from 'expo-router';
 
+const {SpeedTestApp} = NativeModules;
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
 import { AlarmIcon } from '@/components/icon/alarm';
@@ -18,22 +19,15 @@ export default function TabLayout() {
   const mockSpeed = 100;
   const mockDistance = 16;
   
-  // Handle app state changes (background/foreground)
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'active' && isDynamicIslandActive) {
-        // App came back to foreground, deactivate Dynamic Island
-      }
-    });
-    
-    return () => {
-      subscription.remove();
-    };
-  }, [isDynamicIslandActive]);
-  
   // Function to handle the eye button press
   const handleEyePress = async () => {
     setEyePressed(!eyePressed);
+    console.log(SpeedTestApp)
+    if (SpeedTestApp && typeof SpeedTestApp.startActivity === 'function') {
+      SpeedTestApp.startActivity();
+    } else {
+      console.log('SpeedTestApp not found');
+    }
   };
 
   // Create a custom tab bar
@@ -100,7 +94,6 @@ export default function TabLayout() {
             default:
               icon = null;
           }
-
           return (
             <TouchableOpacity
               key={route.key}
