@@ -1,7 +1,8 @@
 import { Stack, Tabs } from 'expo-router';
-import React, { useState } from 'react';
-import { View, Platform, Alert, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect  } from 'react';
+import { View, Platform, Alert, TouchableOpacity, StyleSheet, AppState } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import DynamicIslandAPI from '@/modules/DynamicIslandAPI';
 
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
@@ -13,21 +14,62 @@ import { VoiceIcon } from '@/components/icon/voice';
 export default function TabLayout() {
   // Track if eye button was pressed
   const [eyePressed, setEyePressed] = useState(false);
+  const [isDynamicIslandActive, setIsDynamicIslandActive] = useState(false);
+
+  const mockSpeed = 100;
+  const mockDistance = 16;
+  
+  // Handle app state changes (background/foreground)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'active' && isDynamicIslandActive) {
+        // App came back to foreground, deactivate Dynamic Island
+        DynamicIslandAPI.deactivateDynamicIsland()
+          .then(() => setIsDynamicIslandActive(false));
+      }
+    });
+    
+    return () => {
+      subscription.remove();
+    };
+  }, [isDynamicIslandActive]);
   
   // Function to handle the eye button press
-  const handleEyePress = () => {
+  const handleEyePress = async () => {
     setEyePressed(!eyePressed);
     
-    // Show alert when button is pressed (just for demonstration)
-    Alert.alert(
-      'Eye Button Pressed', 
-      'This button doesn\'t navigate to any screen.',
-      [{ text: 'OK', onPress: () => {
-        console.log('OK Pressed');
-        // Reset the pressed state after a short delay
+    if (Platform.OS === 'ios') {
+      if (!isDynamicIslandActive) {
+        // Activate Dynamic Island with mock data
+        const result = await DynamicIslandAPI.activateDynamicIsland({
+          speed: mockSpeed,
+          distance: mockDistance
+        });
+        
+        if (result.success) {
+          setIsDynamicIslandActive(true);
+        } else {
+          Alert.alert('Error', result.message || 'Failed to activate Dynamic Island');
+          setTimeout(() => setEyePressed(false), 200);
+        }
+      } else {
+        // Deactivate Dynamic Island
+        const result = await DynamicIslandAPI.deactivateDynamicIsland();
+        if (result.success) {
+          setIsDynamicIslandActive(false);
+        }
         setTimeout(() => setEyePressed(false), 200);
-      }}]
-    );
+      }
+    } else {
+      // Show alert for non-iOS devices
+      Alert.alert(
+        'Feature Not Available', 
+        'This feature is only available on iOS devices with Dynamic Island.',
+        [{ text: 'OK', onPress: () => {
+          setTimeout(() => setEyePressed(false), 200);
+        }}]
+      );
+    }
   };
 
   // Create a custom tab bar
