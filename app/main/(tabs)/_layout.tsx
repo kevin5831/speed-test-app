@@ -2,7 +2,6 @@ import React, { useState, useEffect  } from 'react';
 import { View, Platform, Alert, TouchableOpacity, StyleSheet, AppState } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Tabs } from 'expo-router';
-import DynamicIslandAPI from '@/modules/DynamicIslandAPI';
 
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
@@ -24,8 +23,6 @@ export default function TabLayout() {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (nextAppState === 'active' && isDynamicIslandActive) {
         // App came back to foreground, deactivate Dynamic Island
-        DynamicIslandAPI.deactivateDynamicIsland()
-          .then(() => setIsDynamicIslandActive(false));
       }
     });
     
@@ -37,39 +34,6 @@ export default function TabLayout() {
   // Function to handle the eye button press
   const handleEyePress = async () => {
     setEyePressed(!eyePressed);
-    
-    if (Platform.OS === 'ios') {
-      if (!isDynamicIslandActive) {
-        // Activate Dynamic Island with mock data
-        const result = await DynamicIslandAPI.activateDynamicIsland({
-          speed: mockSpeed,
-          distance: mockDistance
-        });
-        
-        if (result.success) {
-          setIsDynamicIslandActive(true);
-        } else {
-          Alert.alert('Error', result.message || 'Failed to activate Dynamic Island');
-          setTimeout(() => setEyePressed(false), 200);
-        }
-      } else {
-        // Deactivate Dynamic Island
-        const result = await DynamicIslandAPI.deactivateDynamicIsland();
-        if (result.success) {
-          setIsDynamicIslandActive(false);
-        }
-        setTimeout(() => setEyePressed(false), 200);
-      }
-    } else {
-      // Show alert for non-iOS devices
-      Alert.alert(
-        'Feature Not Available', 
-        'This feature is only available on iOS devices with Dynamic Island.',
-        [{ text: 'OK', onPress: () => {
-          setTimeout(() => setEyePressed(false), 200);
-        }}]
-      );
-    }
   };
 
   // Create a custom tab bar
