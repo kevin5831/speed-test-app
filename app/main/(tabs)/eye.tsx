@@ -1,166 +1,189 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Switch, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Switch, Platform, Alert } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
-import SpeedWidget from '@/components/SpeedWidgetModule'; // Import the bridge
+import SpeedActivity from '@/components/SpeedActivityModule'; // Import the Live Activity module
 
 export default function EyeScreen() {
-  // State for the widget values - these will come from your API in the future
+  // State for the Live Activity values
   const [speed, setSpeed] = useState(100);
   const [distance, setDistance] = useState(15);
   const [speedLimit, setSpeedLimit] = useState(60);
-  const [isWidgetVisible, setIsWidgetVisible] = useState(true);
+  const [isActivityActive, setIsActivityActive] = useState(false);
 
-  // Function to toggle the widget
-  const toggleWidget = () => {
-    const newVisibility = !isWidgetVisible;
-    setIsWidgetVisible(newVisibility);
+  // Function to start the Live Activity
+  const startLiveActivity = async () => {
+    if (Platform.OS !== 'ios') {
+      Alert.alert('Not Supported', 'Live Activities are only available on iOS 16.1+');
+      return;
+    }
     
-    // Call the native module to toggle widget visibility
-    if (Platform.OS === 'ios') {
-      SpeedWidget.toggleWidget(newVisibility);
+    try {
+      const result = await SpeedActivity.startActivity(speed, distance, speedLimit);
+      console.log('Live Activity started:', result);
+      setIsActivityActive(true);
+      
+      // Optionally minimize the app to show the effect
+      Alert.alert(
+        'Live Activity Started', 
+        'Press Home to see the Dynamic Island widget. The app will continue tracking in the background.',
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
+      );
+    } catch (error) {
+      console.error('Failed to start Live Activity:', error);
+      Alert.alert('Error', `Failed to start Live Activity: ${error}`);
     }
   };
 
-  // Function to update widget data
-  const updateWidgetData = (newSpeed, newDistance, newSpeedLimit) => {
+  // Function to update the Live Activity
+  const updateLiveActivity = async (newSpeed, newDistance, newSpeedLimit) => {
+    if (!isActivityActive || Platform.OS !== 'ios') return;
+    
     setSpeed(newSpeed);
     setDistance(newDistance);
     setSpeedLimit(newSpeedLimit);
     
-    // Update the native widget data
-    if (Platform.OS === 'ios') {
-      SpeedWidget.updateWidgetData(newSpeed, newDistance, newSpeedLimit);
+    try {
+      await SpeedActivity.updateActivity(newSpeed, newDistance, newSpeedLimit);
+      console.log('Live Activity updated');
+    } catch (error) {
+      console.error('Failed to update Live Activity:', error);
     }
   };
 
-  // This effect runs when values change
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      SpeedWidget.updateWidgetData(speed, distance, speedLimit);
+  // Function to stop the Live Activity
+  const stopLiveActivity = async () => {
+    if (!isActivityActive || Platform.OS !== 'ios') return;
+    
+    try {
+      await SpeedActivity.stopActivity();
+      console.log('Live Activity stopped');
+      setIsActivityActive(false);
+    } catch (error) {
+      console.error('Failed to stop Live Activity:', error);
     }
-  }, [speed, distance, speedLimit]);
+  };
 
-  // This effect runs once when the screen mounts
-  useEffect(() => {
-    // Initialize widget with current values
-    if (Platform.OS === 'ios') {
-      SpeedWidget.updateWidgetData(speed, distance, speedLimit);
-      SpeedWidget.toggleWidget(isWidgetVisible);
+  // Toggle the Live Activity
+  const toggleLiveActivity = () => {
+    if (isActivityActive) {
+      stopLiveActivity();
+    } else {
+      startLiveActivity();
     }
-    
-    // Mock API call - this is where you would fetch data from your backend
-    const fetchDataFromAPI = () => {
-      // Simulating API response
-      setTimeout(() => {
-        // These values would come from your API
-        updateWidgetData(100, 15, 60);
-      }, 500);
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (isActivityActive) {
+        stopLiveActivity();
+      }
     };
+  }, [isActivityActive]);
+
+  // Simulate speed changes
+  useEffect(() => {
+    if (!isActivityActive) return;
     
-    fetchDataFromAPI();
-    
-    // Optional: Set up an interval to periodically fetch new data
-    const intervalId = setInterval(() => {
-      // In a real app, you would call your API here
-      // For mock purposes, we'll just slightly change the values
-      const newSpeed = Math.floor(speed + (Math.random() * 10 - 5));
+    const interval = setInterval(() => {
+      // Simulate random speed changes (for demo purposes)
+      const newSpeed = Math.max(0, Math.floor(speed + (Math.random() * 10 - 5)));
       const newDistance = Math.max(1, Math.floor(distance + (Math.random() * 2 - 1)));
-      updateWidgetData(newSpeed, newDistance, speedLimit);
-    }, 3000);
+      
+      updateLiveActivity(newSpeed, newDistance, speedLimit);
+    }, 5000); // Update every 5 seconds
     
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => clearInterval(interval);
+  }, [isActivityActive, speed, distance, speedLimit]);
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.contentContainer}
-      >
+      <View style={styles.contentContainer}>
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>Speed Widget Controls</Text>
+          <Text style={styles.headerText}>Speed Live Activity</Text>
+          <Text style={styles.subheaderText}>iOS 16.1+ required</Text>
         </View>
 
-        {/* Widget Switch */}
-        <View style={styles.switchContainer}>
-          <Text style={styles.switchText}>Show Widget</Text>
-          <Switch
-            trackColor={{ false: '#767577', true: '#FF4D4D' }}
-            thumbColor={isWidgetVisible ? '#ffffff' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleWidget}
-            value={isWidgetVisible}
-          />
+        <View style={styles.cardContainer}>
+          <Text style={styles.cardTitle}>Current Values</Text>
+          
+          <View style={styles.valueRow}>
+            <Text style={styles.valueLabel}>Speed:</Text>
+            <Text style={styles.valueText}>{speed} km/h</Text>
+          </View>
+          
+          <View style={styles.valueRow}>
+            <Text style={styles.valueLabel}>Distance:</Text>
+            <Text style={styles.valueText}>{distance} 公尺</Text>
+          </View>
+          
+          <View style={styles.valueRow}>
+            <Text style={styles.valueLabel}>Speed Limit:</Text>
+            <Text style={styles.valueText}>{speedLimit} km/h</Text>
+          </View>
         </View>
 
-        {/* Speed Control */}
-        <View style={styles.controlContainer}>
-          <Text style={styles.controlText}>Speed: {speed} km/h</Text>
+        <View style={styles.controlsContainer}>
+          <Text style={styles.controlsTitle}>Controls</Text>
+          
+          <View style={styles.switchContainer}>
+            <Text style={styles.switchText}>Live Activity</Text>
+            <Switch
+              trackColor={{ false: '#767577', true: '#FF4D4D' }}
+              thumbColor={isActivityActive ? '#ffffff' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleLiveActivity}
+              value={isActivityActive}
+            />
+          </View>
+          
           <View style={styles.buttonRow}>
             <TouchableOpacity 
-              style={styles.button} 
-              onPress={() => updateWidgetData(Math.max(0, speed - 10), distance, speedLimit)}
+              style={[styles.button, !isActivityActive && styles.buttonDisabled]} 
+              onPress={() => updateLiveActivity(Math.max(0, speed - 10), distance, speedLimit)}
+              disabled={!isActivityActive}
             >
-              <Text style={styles.buttonText}>-10</Text>
+              <Text style={styles.buttonText}>Speed -10</Text>
             </TouchableOpacity>
+            
             <TouchableOpacity 
-              style={styles.button} 
-              onPress={() => updateWidgetData(speed + 10, distance, speedLimit)}
+              style={[styles.button, !isActivityActive && styles.buttonDisabled]} 
+              onPress={() => updateLiveActivity(speed + 10, distance, speedLimit)}
+              disabled={!isActivityActive}
             >
-              <Text style={styles.buttonText}>+10</Text>
+              <Text style={styles.buttonText}>Speed +10</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.buttonRow}>
+            <TouchableOpacity 
+              style={[styles.button, !isActivityActive && styles.buttonDisabled]} 
+              onPress={() => updateLiveActivity(speed, Math.max(1, distance - 1), speedLimit)}
+              disabled={!isActivityActive}
+            >
+              <Text style={styles.buttonText}>Distance -1</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.button, !isActivityActive && styles.buttonDisabled]} 
+              onPress={() => updateLiveActivity(speed, distance + 1, speedLimit)}
+              disabled={!isActivityActive}
+            >
+              <Text style={styles.buttonText}>Distance +1</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Distance Control */}
-        <View style={styles.controlContainer}>
-          <Text style={styles.controlText}>Distance: {distance} 公尺</Text>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity 
-              style={styles.button} 
-              onPress={() => updateWidgetData(speed, Math.max(1, distance - 1), speedLimit)}
-            >
-              <Text style={styles.buttonText}>-1</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.button} 
-              onPress={() => updateWidgetData(speed, distance + 1, speedLimit)}
-            >
-              <Text style={styles.buttonText}>+1</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Speed Limit Control */}
-        <View style={styles.controlContainer}>
-          <Text style={styles.controlText}>Speed Limit: {speedLimit} km/h</Text>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity 
-              style={styles.button} 
-              onPress={() => updateWidgetData(speed, distance, Math.max(10, speedLimit - 10))}
-            >
-              <Text style={styles.buttonText}>-10</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.button} 
-              onPress={() => updateWidgetData(speed, distance, speedLimit + 10)}
-            >
-              <Text style={styles.buttonText}>+10</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Instructions */}
         <View style={styles.instructionContainer}>
-          <Text style={styles.instructionTitle}>Widget Instructions:</Text>
-          <Text style={styles.instructionText}>• Add the widget to your home screen from the widget gallery</Text>
-          <Text style={styles.instructionText}>• Use this screen to control the widget's data</Text>
-          <Text style={styles.instructionText}>• The widget will update in real-time with your changes</Text>
-          <Text style={styles.instructionText}>• The widget will continue to show even when the app is closed</Text>
-          <Text style={styles.instructionText}>• In production, data will come from your backend API</Text>
+          <Text style={styles.instructionTitle}>Instructions:</Text>
+          <Text style={styles.instructionText}>• Toggle the switch to start/stop the Live Activity</Text>
+          <Text style={styles.instructionText}>• Press the Home button to see the Dynamic Island</Text>
+          <Text style={styles.instructionText}>• Use controls to update values while in background</Text>
+          <Text style={styles.instructionText}>• Requires iOS 16.1 or later</Text>
+          <Text style={styles.instructionText}>• Live Activities appear in Dynamic Island</Text>
+          <Text style={styles.instructionText}>• Data will update automatically in the background</Text>
         </View>
-      </ScrollView>
+      </View>
     </ThemedView>
   );
 }
@@ -170,15 +193,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
-  scrollView: {
-    flex: 1,
-  },
   contentContainer: {
+    flex: 1,
     padding: 20,
   },
   headerContainer: {
-    marginBottom: 20,
     alignItems: 'center',
+    marginBottom: 30,
   },
   headerText: {
     color: '#FFFFFF',
@@ -186,51 +207,84 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  subheaderText: {
+    color: '#AAAAAA',
+    fontSize: 14,
+    marginTop: 5,
+  },
+  cardContainer: {
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+  },
+  cardTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  valueRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  valueLabel: {
+    color: '#AAAAAA',
+    fontSize: 16,
+  },
+  valueText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  controlsContainer: {
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+  },
+  controlsTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
   switchContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#222222',
-    padding: 15,
-    borderRadius: 10,
     marginBottom: 20,
   },
   switchText: {
     color: '#FFFFFF',
     fontSize: 16,
   },
-  controlContainer: {
-    backgroundColor: '#222222',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  controlText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    marginBottom: 10,
-  },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 15,
   },
   button: {
     backgroundColor: '#FF4D4D',
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 15,
-    borderRadius: 5,
+    borderRadius: 8,
     width: '48%',
     alignItems: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#555555',
   },
   buttonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+    fontSize: 14,
   },
   instructionContainer: {
-    backgroundColor: '#222222',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    padding: 20,
   },
   instructionTitle: {
     color: '#FFFFFF',
@@ -239,8 +293,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   instructionText: {
-    color: '#FFFFFF',
+    color: '#CCCCCC',
     fontSize: 14,
     marginBottom: 5,
+    lineHeight: 20,
   },
 });
