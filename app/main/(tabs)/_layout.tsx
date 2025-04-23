@@ -1,15 +1,17 @@
-import React, { useState, useEffect  } from 'react';
-import { View, Platform, Alert, TouchableOpacity, NativeModules, StyleSheet, AppState } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Platform, Alert, TouchableOpacity, NativeModules, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Tabs } from 'expo-router';
 
-const {LiveActivity} = NativeModules;
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
 import { AlarmIcon } from '@/components/icon/alarm';
 import { EyeIcon } from '@/components/icon/eye';
 import { UserIcon } from '@/components/icon/user';
 import { VoiceIcon } from '@/components/icon/voice';
+
+// Get the LiveActivity module properly
+const { LiveActivity } = NativeModules;
 
 export default function TabLayout() {
   // Track if eye button was pressed
@@ -22,19 +24,15 @@ export default function TabLayout() {
   // Function to handle the eye button press
   const handleEyePress = async () => {
     setEyePressed(!eyePressed);
-    console.log(LiveActivity, 'clicked')
-    if (LiveActivity && typeof LiveActivity.startActivity === 'function') {
-      LiveActivity.startActivity();
-    } else {
-      console.log('SpeedTestApp not found');
-    }
+    console.log('LiveActivity:', LiveActivity);
+    LiveActivity.startActivity()
   };
 
   // Create a custom tab bar
   function CustomTabBar({ state, descriptors, navigation }) {
     return (
       <View style={styles.tabBar}>
-        {state.routes.map((route, index) => {
+        {state.routes.map((route, index : Number) => {
           // Get the component for the route
           const { options } = descriptors[route.key];
           const label = options.tabBarLabel || options.title || route.name;
