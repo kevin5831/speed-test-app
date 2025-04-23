@@ -9,7 +9,7 @@ export default function UserScreen() {
       <View>
         <Text style={styles.linkText}>Welcome!</Text>
       </View>
-      <Link href={'/main/(tabs)/home'} style={styles.link}>
+      <Link href={'/main/(tabs)/alarm'} style={styles.link}>
         <Text style={styles.linkText}>Go to Home!</Text>
       </Link>
       <Link href={'/agree/agree'} style={styles.link}>
@@ -17,6 +17,9 @@ export default function UserScreen() {
       </Link>
       <Link href={'/main/(non-tabs)/ImgReport'} style={styles.link}>
         <Text style={styles.linkText}>Go to imgReport!</Text>
+      </Link>
+      <Link href={'/main/(non-tabs)/VoiceReport'} style={styles.link}>
+        <Text style={styles.linkText}>Go to voiceReport!</Text>
       </Link>
     </ThemedView>
   );

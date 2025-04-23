@@ -3,7 +3,7 @@ import { View, Platform, Alert, TouchableOpacity, NativeModules, StyleSheet, App
 import { StatusBar } from 'expo-status-bar';
 import { Tabs } from 'expo-router';
 
-const {SpeedTestApp} = NativeModules;
+const {LiveActivity} = NativeModules;
 // Import custom SVG icon components
 import { SpeedIcon } from '@/components/icon/speed';
 import { AlarmIcon } from '@/components/icon/alarm';
@@ -22,9 +22,9 @@ export default function TabLayout() {
   // Function to handle the eye button press
   const handleEyePress = async () => {
     setEyePressed(!eyePressed);
-    console.log(SpeedTestApp)
-    if (SpeedTestApp && typeof SpeedTestApp.startActivity === 'function') {
-      SpeedTestApp.startActivity();
+    console.log(LiveActivity, 'clicked')
+    if (LiveActivity && typeof LiveActivity.startActivity === 'function') {
+      LiveActivity.startActivity();
     } else {
       console.log('SpeedTestApp not found');
     }
