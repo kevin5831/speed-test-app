@@ -13,4 +13,8 @@
 
 RCT_EXTERN_METHOD(startActivity)
   
++ (BOOL)requiresMainQueueSetup
+{
+  return NO;
+}
 @end
