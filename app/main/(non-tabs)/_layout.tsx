@@ -26,6 +26,17 @@ export default function NonTabsLayout() {
           presentation: 'card'
         }} 
       />
+      <Stack.Screen
+        name='SpeedTest'
+        options={{
+          title: "Speed Test",
+          headerStyle: {
+            backgroundColor: '#121212',
+          },
+          headerTintColor: '#fff',
+          presentation: 'card'
+        }}
+      />
     </Stack>
   );
 }

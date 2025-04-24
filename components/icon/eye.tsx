@@ -12,7 +12,7 @@ export const EyeIcon: React.FC<EyeIconProps> = ({ focused = false }) => {
   
   return (
     <View style={styles.container}>
-      <Svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+      <Svg width="36" height="36" viewBox="0 0 32 32" fill="none">
         <Path 
           d="M28.6404 15.84C28.6404 13.1199 23.6804 8.47998 15.8962 8.47998C8.11198 8.47998 3.36035 12.8 3.36035 15.84C3.36035 18.56 7.79199 23.2 15.8962 23.2C24.0003 23.2 28.6404 18.56 28.6404 15.84Z" 
           stroke={color} 
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 24,
-    height: 24,
+    width: 36,
+    height: 36,
   },
 });

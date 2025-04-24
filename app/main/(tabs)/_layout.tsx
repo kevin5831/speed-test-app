@@ -25,7 +25,7 @@ export default function TabLayout() {
   const handleEyePress = async () => {
     setEyePressed(!eyePressed);
     console.log('LiveActivity:', LiveActivity);
-    LiveActivity.startActivity()
+    // LiveActivity.startActivity()
   };
 
   // Create a custom tab bar
@@ -146,7 +146,7 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#121212',
+    backgroundColor: '#1a171f',
     borderTopWidth: 0,
     height: 60,
     justifyContent: 'space-around',
